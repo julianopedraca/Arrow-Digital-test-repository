@@ -14,16 +14,16 @@ const Permissions = {
   User: "user",
   Admin: "admin",
 };
-
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUGVybWlzc2lvbnMiOlsidXNlciJdLCJsYWJzIjpbeyJfaWQiOiI2NTIzMjc2N2Q4ZWY4NzQxZWUwYWI2ZjkifV0sImNsaW5pY3MiOltdLCJpYXQiOjE2OTY5NzY4NjMsImV4cCI6MTY5Njk5MTI2M30.SG-FcgBG1-o6rPoaVCzBRjU6uJUcHkGj5yxP4rFrvGE";
+const jwt = jsonwebtoken;
 
 async function UserGuard(req, res, next) {
-  const jwt = jsonwebtoken;
   let user;
+
+  const token = req.headers.authorization.split(' ')[1];
 
   try {
     user = jwt.verify(token, privateKey);
+    console.log();
   } catch (err) {
     return res.status(401).json(err);
   }
@@ -44,8 +44,9 @@ async function UserGuard(req, res, next) {
 }
 
 async function AdminGuard(req, res, next) {
-  const jwt = jsonwebtoken;
   let user;
+
+  const token = req.headers.authorization.split(' ')[1];
 
   try {
     user = jwt.verify(token, privateKey);
@@ -67,4 +68,25 @@ async function AdminGuard(req, res, next) {
   next();
 }
 
-export { UserGuard, AdminGuard };
+async function LabGuard (req, res, next) {
+
+  const token = req.headers.authorization.split(' ')[1];
+
+  const labId = req.params.id
+
+  const userLabPermission = jwt.verify(token,privateKey)
+  
+
+  const userIsAuthorized = userLabPermission.labs.find((lab) => lab._id === labId)
+
+  if(!userIsAuthorized)
+    res.status(401).json({message: 'Access denied'})
+
+  next()
+}
+
+export {
+  UserGuard,
+  AdminGuard,
+  LabGuard
+};

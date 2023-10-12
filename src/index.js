@@ -5,16 +5,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { notFound, errorHandler } from './middlewares/errorHandler.js';
 import api from './api/index.js';
-import { connectToMongoDB } from './data/mongooseController.js';
 
 dotenv.config();
-
-const connectToDB = async () => {
-    await connectToMongoDB()
-    console.log('Connected to db');
-}
-
-connectToDB()
 
 const app = express();
 

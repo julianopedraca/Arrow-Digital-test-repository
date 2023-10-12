@@ -81,7 +81,6 @@ router.post("/logout", async (req, res) => {
   try {
     const { token } = req.body;
 
-
     await UserSession.deleteOne({ sessionToken: token });
 
     return res.status(200).json({ message: "logout successfully" });

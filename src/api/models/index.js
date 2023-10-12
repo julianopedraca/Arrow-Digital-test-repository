@@ -12,17 +12,17 @@ import service from './service.js';
 import user from './user.js';
 import pandaScan from './pandaScan.js';
 
-import { UserGuard, AdminGuard  } from '../auth/routeGuard.js'
+import { UserGuard, AdminGuard, LabGuard  } from '../auth/routeGuard.js'
 
 
 const router = Router();
-router.use('/lab', UserGuard, lab);
+router.use('/lab', UserGuard,  lab);
 router.use('/clinic',UserGuard, clinic);
 router.use('/collaborator',UserGuard, collaborator);
 router.use('/inventory',UserGuard, inventory);
 router.use('/order',UserGuard, order);
 router.use('/service',UserGuard, service);
-router.use('/user', UserGuard, user);
+router.use('/user', user);
 router.use('/pandaScan', pandaScan);
 
 export default router;

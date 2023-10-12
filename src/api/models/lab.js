@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import { Lab } from '../../data/mongooseModels.js';
 
+import { UserGuard, AdminGuard, LabGuard  } from '../auth/routeGuard.js'
+
+
 const router = Router();
 
 /**
@@ -27,7 +30,7 @@ router.get('/', (req, res) => {
  * @param {Express<Request>} req the request object
  * @param {Express<Response>} res the response object
  */
-router.get('/:id', (req, res) => {
+router.get('/:id', LabGuard, (req, res) => {
           // #swagger.tags = ['Lab']
 
   Lab.findById(req.params.id)

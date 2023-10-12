@@ -1,10 +1,33 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../index.js'; 
+import { connectToMongoDB } from '../data/mongooseController.js';
 
 const expect = chai.expect;
 
 chai.use(chaiHttp);
+
+let dbConnection;
+
+before(async () => {
+  try {
+    dbConnection = await connectToMongoDB();
+    console.log('Connected to db');
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+const connectToDB = async () => {
+  try {
+    await connectToMongoDB()
+    console.log('Connected to db');
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+connectToDB()
 
 describe('Test Server', () => {
   it('should return status 200 on /api/ endpoint', (done) => {
@@ -41,6 +64,36 @@ describe("Authentication API", () => {
     });
   });
 
+  //test route guards
+  describe("Route Guards", () => {
+    describe("User Route Guard", () => {
+      it("should allow a request that has user permission", (done) => {
+        chai
+          .request(server)
+          .get("/api/models/service")
+          .set('Authorization', `Bearer ${authToken}`)
+          .end((err, res) => {
+            expect(res).to.have.status(200);
+            done();
+          });          
+      })
+    })
+
+  describe("Lab Route Guard", () => {
+    const id = '65232767d8ef8741ee0ab6f9'
+    it("should allow a token that has the lab permission", (done) =>{
+      chai
+        .request(server)
+        .get(`/api/models/lab/${id}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          done();
+        })
+      })
+  })
+  });
+  
   // Test the logout route
   describe("/POST logout", () => {
     it("it should logout a user", (done) => {
@@ -59,4 +112,6 @@ describe("Authentication API", () => {
         });
     });
   });
+
 });
+
